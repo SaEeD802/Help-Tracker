@@ -1,0 +1,124 @@
+{% extends 'base.html' %}
+{% block title %}هلال احمر - سیستم مدیریت گزارشات حوادث{% endblock %}
+{% block style %}
+        body {
+            direction: rtl;
+            font-family: 'Vazir', sans-serif;
+            background-image: url('https://www.transparenttextures.com/patterns/white-wall.png');
+            background-color: #f8f9fa;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        .navbar-custom {
+            background-color: #da291c;
+        }
+        .navbar-custom .navbar-brand, .navbar-custom .nav-link {
+            color: #fff;
+        }
+        .navbar-custom .nav-link:hover {
+            color: #f1f1f1;
+        }
+        .content-wrapper {
+            flex-grow: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .btn-glass {
+            background-color: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            border: 2px solid #da291c;
+            color: #da291c;
+            font-size: 1.5rem;
+            padding: 15px 30px;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+        }
+        .btn-glass:hover {
+            background-color: rgba(255, 255, 255, 0.4);
+            color: #c4251b;
+        }
+        .alert-important {
+            color: #da291c;
+            font-weight: bold;
+            font-size: 1.2rem;
+            margin-top: 20px;
+        }
+        a.phone-link {
+            color: #da291c;
+            font-weight: bold;
+            font-size: 1.2rem;
+            text-decoration: none;
+            border-bottom: 2px solid #da291c;
+        }
+        a.phone-link:hover {
+            text-decoration: underline;
+        }
+        @media (max-width: 768px) {
+            .btn-glass {
+                font-size: 1.2rem;
+                padding: 10px 20px;
+            }
+            .flag img {
+                width: 80px;
+            }
+        }
+{% endblock %}
+{% block content %}
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-custom">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/e/e5/Iranian_Red_Crescent.png" alt="Red Crescent Logo" width="30" height="30" class="d-inline-block align-text-top">
+                گزارش حوادث
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+        </div>
+    </nav>
+
+
+    <!-- Centered Content -->
+    <div class="content-wrapper">
+        <div class="text-center">
+            <div class="flag mb-4">
+                <!-- Add this in the content section of index.html -->
+                <div id="map" style="height: 500px;"></div>
+            </div>
+{#            <div class="flag mb-4">#}
+{#                <h1>به سیستم مدیریت گزارشات حوادث هلال احمر خوش آمدید</h1>#}
+{#                <p>این سیستم به شما اجازه می‌دهد تا گزارشات مربوط به حوادث را به سرعت و دقت ثبت و پیگیری کنید.</p>#}
+{#            </div>#}
+            <a href="{% url 'report_incident' %}" class="btn btn-glass">گزارش حادثه جدید</a>
+            <div class="alert-important">
+                در صورت نیاز فوری به کمک، لطفاً با شماره <a href="tel:112" class="phone-link">۱۱۲</a> تماس بگیرید.
+            </div>
+        </div>
+    </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Initialize the map
+        var map = L.map('map').setView([32.0, 53.0], 6); // Default center for Iran
+
+        // Add tile layer
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+
+        // Fetch incident data
+        fetch('{% url "incident_data" %}')
+            .then(response => response.json())
+            .then(data => {
+                data.forEach(incident => {
+                    var timestamp_jalali = new Date(incident.timestamp).toLocaleString('fa-IR', { timeZone: 'Asia/Tehran' });
+                    var marker = L.marker([incident.location_lat, incident.location_long])
+                        .addTo(map)
+                        .bindPopup(`<b>${incident.description}</b><br><img src="${incident.image}" width="100"><br>${timestamp_jalali}`);
+                });
+            });
+    });
+</script>
+{% endblock %}

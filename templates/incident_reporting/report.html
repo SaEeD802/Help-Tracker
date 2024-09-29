@@ -1,0 +1,112 @@
+{% extends 'base.html' %}
+{% block title %}ارسال گزارش حادثه{% endblock %}
+{% block style %}
+        body {
+            direction: rtl;
+            font-family: 'Vazir', sans-serif;
+            background-image: url('https://www.transparenttextures.com/patterns/white-wall.png');
+            background-color: #f8f9fa;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .form-container {
+            background-color: rgba(255, 255, 255, 0.8);
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            color: #da291c;
+        }
+        .btn-custom {
+            background-color: #da291c;
+            color: white;
+        }
+        .btn-custom:hover {
+            background-color: #b72117;
+        }
+        .btn-location {
+            color: #17a2b8;
+        }
+        .btn-location:hover {
+            color: #117a8b;
+        }
+        @media (max-width: 768px) {
+            .form-container {
+                width: 100%;
+            }
+        }
+{% endblock %}
+{% block content %}
+    <div class="container">
+        <div class="form-container">
+            <h1 class="text-center">ارسال گزارش حادثه</h1>
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <label for="description" class="form-label">توضیحات حادثه:</label>
+                    <textarea id="description" name="description" class="form-control" rows="4" required></textarea>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="location_lat" class="form-label">عرض جغرافیایی:</label>
+                        <input type="text" id="location_lat" name="location_lat" class="form-control" required>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="location_long" class="form-label">طول جغرافیایی:</label>
+                        <input type="text" id="location_long" name="location_long" class="form-control" required>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <button type="button" class="btn btn-outline-info btn-location" onclick="getLocation()">دریافت موقعیت مکانی من</button>
+                </div>
+
+                <div class="mb-3">
+                    <label for="image" class="form-label">تصویر حادثه:</label>
+                    <!-- دوربین باز می‌شود به‌جای گالری -->
+                    <input type="file" id="image" name="image" class="form-control" accept="image/*" capture="environment" required>
+                </div>
+
+                <div class="text-center">
+                    <button type="submit" class="btn btn-custom btn-lg mt-3">ارسال گزارش</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function getLocation() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(showPosition, showError);
+            } else {
+                alert("مرورگر شما از موقعیت‌یابی پشتیبانی نمی‌کند.");
+            }
+        }
+
+        function showPosition(position) {
+            document.getElementById('location_lat').value = position.coords.latitude;
+            document.getElementById('location_long').value = position.coords.longitude;
+        }
+
+        function showError(error) {
+            switch(error.code) {
+                case error.PERMISSION_DENIED:
+                    alert("دسترسی به موقعیت مکانی رد شد.");
+                    break;
+                case error.POSITION_UNAVAILABLE:
+                    alert("اطلاعات موقعیت مکانی در دسترس نیست.");
+                    break;
+                case error.TIMEOUT:
+                    alert("درخواست موقعیت مکانی تمام شد.");
+                    break;
+                case error.UNKNOWN_ERROR:
+                    alert("یک خطای ناشناخته رخ داد.");
+                    break;
+            }
+        }
+    </script>
+{% endblock %}

@@ -1,0 +1,98 @@
+{% extends 'base.html' %}
+{% block title %}مدیریت گزارش‌ها{% endblock %}
+{% block style %}
+    body {
+        direction: rtl;
+        font-family: 'Vazir', sans-serif;
+        background-color: #f8f9fa;
+    }
+    .container {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        padding: 20px;
+        gap: 20px;
+    }
+    .reports-section {
+        width: 40%;
+        background-color: white;
+        border-radius: 8px;
+        padding: 20px;
+        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    }
+    .map-section {
+        width: 60%;
+        height: 500px; /* Adjust the height as needed */
+    }
+    h2 {
+        color: #da291c;
+    }
+    .btn-verified {
+        background-color: #28a745;
+        color: white;
+    }
+    .btn-unverified {
+        background-color: #ffc107;
+        color: black;
+    }
+    .alert {
+        margin-top: 20px;
+    }
+{% endblock %}
+{% block content %}
+    <div class="container">
+        <!-- Reports Table -->
+        <div class="reports-section">
+            <h2 class="text-center">مدیریت گزارش‌ها</h2>
+            <table class="table table-striped mt-4">
+                <thead>
+                    <tr>
+                        <th>گزارش</th>
+                        <th>موقعیت جغرافیایی</th>
+                        <th>اقدامات</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for report in reports %}
+                    <tr>
+                            <td>{{ report.description }}</td>
+                            <td>{{ report.location_lat }}, {{ report.location_long }}</td>
+                            <td>
+                                {% if report.is_verified %}
+                                    <a href="{% url 'verify_report' report.id %}" class="btn btn-verified">تایید شده</a>
+                                {% else %}
+                                    <a href="{% url 'verify_report' report.id %}" class="btn btn-unverified">در انتظار تایید</a>
+                                {% endif %}
+                            </td>
+                        </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        
+        <!-- Map -->
+        <div class="map-section" id="map"></div>
+    </div>
+
+    <!-- Leaflet.js for map -->
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var map = L.map('map').setView([32.0, 53.0], 6); // Default center for Iran
+
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            }).addTo(map);
+
+            fetch('{% url "incident_data" %}')
+                .then(response => response.json())
+                .then(data => {
+                    data.forEach(incident => {
+                        var marker = L.marker([incident.location_lat, incident.location_long])
+                            .addTo(map)
+                            .bindPopup(`<b>${incident.description}</b><br><img src="${incident.image}" width="100"><br>${incident.timestamp}`);
+                    });
+                });
+        });
+    </script>
+{% endblock %}

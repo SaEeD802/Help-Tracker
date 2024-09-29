@@ -1,0 +1,56 @@
+{% load static %}
+{% load jformat %}
+
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="{% static 'incident_reporting/images/favicon.ico' %}" type="image/x-icon">
+    <title>{% block title %}{% endblock %}</title>
+    
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="سیستم مدیریت گزارشات حوادث برای هلال احمر. به سادگی و سریع گزارشات خود را ثبت و مدیریت کنید.">
+    <meta name="keywords" content="هلال احمر, گزارشات حوادث, سیستم مدیریت, گزارش, حادثه">
+    <meta name="author" content="نام شما یا تیم توسعه">
+{#    <link rel="canonical" href="https://yourwebsite.com/" /> <!-- آدرس صفحه اصلی -->#}
+
+    <!-- Open Graph Meta Tags (for Social Media Sharing) -->
+    <meta property="og:title" content="هلال احمر - سیستم مدیریت گزارشات حوادث" />
+    <meta property="og:description" content="سیستم مدیریت گزارشات حوادث برای هلال احمر. به سادگی و سریع گزارشات خود را ثبت و مدیریت کنید." />
+{#    <meta property="og:image" content="https://yourwebsite.com/static/images/your-image.jpg" />#}
+{#    <meta property="og:url" content="https://yourwebsite.com/" />#}
+    <meta property="og:type" content="website" />
+
+    <!-- Twitter Card Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="هلال احمر - سیستم مدیریت گزارشات حوادث" />
+    <meta name="twitter:description" content="سیستم مدیریت گزارشات حوادث برای هلال احمر. به سادگی و سریع گزارشات خود را ثبت و مدیریت کنید." />
+{#    <meta name="twitter:image" content="https://yourwebsite.com/static/images/your-image.jpg" />#}
+    
+    <!-- CSS -->
+    <link href="{% static 'incident_reporting/css/bootstrap.min.css' %}" rel="stylesheet">
+
+    <!-- Add this in the head section -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+
+    <style>
+        {% block style %}
+        	
+        {% endblock %}
+    </style>
+</head>
+<body>
+    {% block content %}
+    	
+    {% endblock %}
+
+
+
+    <!-- JS -->
+    <script src="{% static 'incident_reporting/js/bootstrap.bundle.min.js' %}"></script>
+    
+    <!-- Add this before the closing body tag -->
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+</body>
+</html>
